@@ -1,5 +1,6 @@
 import { and, eq } from "drizzle-orm";
 import { contestsStub } from "~/__mocks__/stubs/contestsStub.ts";
+import { eventCategoriesStub } from "~/__mocks__/stubs/eventCategoriesStub.ts";
 import { eventsStub } from "~/__mocks__/stubs/eventsStub.ts";
 import { roundsStub } from "~/__mocks__/stubs/roundsStub.ts";
 import { defaultGlobalSettings, getDefaultOrgSettings } from "~/helpers/default-settings.ts";
@@ -11,6 +12,7 @@ import { compareAvgs, compareSingles, getNameAndLocalizedName } from "~/helpers/
 import { WcaCompetitionValidator } from "~/helpers/validators/wca/WcaCompetition.ts";
 import { accountsTable, membersTable, usersTable } from "~/server/db/schema/auth-schema.ts";
 import { contestsTable } from "~/server/db/schema/contests.ts";
+import { eventCategoriesTable } from "~/server/db/schema/event-categories.ts";
 import { eventsTable } from "~/server/db/schema/events.ts";
 import { personsTable } from "~/server/db/schema/persons.ts";
 import { postsTable } from "~/server/db/schema/posts.ts";
@@ -74,6 +76,11 @@ export async function register() {
         console.log("Seeding test persons...");
         await db.insert(personsTable).values(testPersons);
         console.log("Finished seeding test persons");
+      }
+      if ((await db.select().from(eventCategoriesTable)).length === 0) {
+        console.log("Seeding test event categories...");
+        await db.insert(eventCategoriesTable).values(eventCategoriesStub);
+        console.log("Finished seeding test event categories");
       }
       if ((await db.select().from(eventsTable)).length === 0) {
         console.log("Seeding test events...");
