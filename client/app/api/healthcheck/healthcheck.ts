@@ -16,6 +16,10 @@ async function checkDatabase() {
 }
 
 async function checkNodemailer() {
+  if (!process.env.EMAIL_HOST || !process.env.EMAIL_PORT) {
+    return { healthy: true, configured: false };
+  }
+
   try {
     const start = Date.now();
     const transporter = nodemailer.createTransport(nodemailerConnectionOptions);
