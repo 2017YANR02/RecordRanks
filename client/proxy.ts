@@ -7,6 +7,13 @@ function log(url: URL) {
   });
 }
 
+function getSingleTenantDestination(request: NextRequest, pathname: string): URL {
+  const destination = new URL(process.env.NEXT_PUBLIC_BASE_URL ?? request.url);
+  destination.pathname = pathname;
+  destination.search = request.nextUrl.search;
+  return destination;
+}
+
 export function proxy(request: NextRequest) {
   const url = new URL(request.url);
 
@@ -35,11 +42,14 @@ export function proxy(request: NextRequest) {
       );
 
     if (isPathWithSlug) {
-      return NextResponse.rewrite(request.url.replace(url.host, `${url.host}/default`));
+      const pathname = url.pathname === "/" ? "/default" : `/default${url.pathname}`;
+      return NextResponse.redirect(getSingleTenantDestination(request, pathname));
     } else {
       const isApiPathWithSlug = /^\/api\/(events|results|enter-attempt|enter-results)(\/.*)?$/.test(url.pathname);
       if (isApiPathWithSlug)
-        return NextResponse.rewrite(request.url.replace(`${url.host}/api`, `${url.host}/api/default`));
+        return NextResponse.redirect(
+          getSingleTenantDestination(request, url.pathname.replace("/api/", "/api/default/")),
+        );
     }
   }
 }
