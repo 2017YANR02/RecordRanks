@@ -13,7 +13,8 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import Image from "next/image";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
-import { useContext, useState } from "react";
+import { Suspense, useContext, useState } from "react";
+import CubeRootLinks from './CubeRootLinks.tsx';
 import useSWR, { useSWRConfig } from "swr";
 import { authClient } from "~/helpers/auth-client.ts";
 import { C, IS_RR_INSTANCE } from "~/helpers/constants.ts";
@@ -107,6 +108,7 @@ function Navbar() {
 
   return (
     <nav className="navbar navbar-expand-lg bg-body-tertiary">
+      {process.env.NEXT_PUBLIC_PROJECT_NAME === 'CubeRoot Contests' && <Suspense><CubeRootLinks /></Suspense>}
       <div className="container-md position-relative">
         {organization ? (
           <Link href={slugPath(organization.slug, "") || "/"} className="navbar-brand">

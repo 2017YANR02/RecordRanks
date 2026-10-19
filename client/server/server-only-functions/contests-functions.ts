@@ -114,9 +114,9 @@ export async function getContest({
   ]);
   if (eventId && !events.some((e) => e.eventId === eventId)) throw new Error(`Event with ID ${eventId} not found`);
 
-  const eventIdOrFirst = eventId ?? events[0].eventId;
+  const eventIdOrFirst = eventId ?? events[0]?.eventId;
 
-  const results = await getContestEventResults({ organizationId, competitionId, eventId: eventIdOrFirst });
+  const results = eventIdOrFirst ? await getContestEventResults({ organizationId, competitionId, eventId: eventIdOrFirst }) : [];
 
   const personIds = Array.from(
     new Set(results.map((r) => r.personIds).reduce((prev, curr) => [...(prev as []), ...curr], [])),

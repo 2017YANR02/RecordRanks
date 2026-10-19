@@ -3,6 +3,7 @@
 import { useParams } from "next/navigation";
 import { useQueryState } from "nuqs";
 import { use } from "react";
+import { getCurrentTiedRecords } from "~/helpers/current-records.ts";
 import RecordRow from "~/app/[slug]/records/[eventCategory]/RecordRow.tsx";
 import EventTitle from "~/app/components/EventTitle.tsx";
 import type { RecordRanking } from "~/helpers/types/Rankings.tsx";
@@ -34,29 +35,10 @@ function RecordsTable({ recordsPromise, events, regions }: Props) {
             // If we're filtering by a specific event, we want to display the whole record history for the event
             const mixedRecords = !!eventId;
 
-            const getCurrentTiedRecords = (type: "single" | "average") => {
-              let currentRecordResult: number | undefined;
-
-              for (const record of records) {
-                if (record.eventId === event.eventId && (record.type === "single-and-avg" || record.type === type)) {
-                  const result = type === "single" ? record.best : record.average;
-                  if (!currentRecordResult) currentRecordResult = result;
-                  else if (result > currentRecordResult) break;
-
-                  eventRecords.push({
-                    ...record,
-                    rankingId: record.rankingId.replace(/_.*$/, `_${type}`),
-                    type,
-                  });
-                }
-              }
-            };
-
             if (mixedRecords) {
               eventRecords = records;
             } else {
-              getCurrentTiedRecords("single");
-              getCurrentTiedRecords("average");
+              eventRecords = getCurrentTiedRecords(records, event.eventId);
             }
 
             return (

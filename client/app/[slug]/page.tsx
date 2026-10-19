@@ -89,8 +89,10 @@ async function OrganizationHomePage({ params }: Props) {
         />
       </Suspense>
 
-      <h3 className="rr-basic-heading">Contact</h3>
-      <p>For general inquiries, send an email to {organization?.metadata.contactEmail || "ERROR"}.</p>
+      {organization.metadata.contactEmail && <>
+        <h3 className="rr-basic-heading">Contact</h3>
+        <p>For general inquiries, send an email to {organization.metadata.contactEmail}.</p>
+      </>}
 
       <Suspense>
         <CollectiveCubing settingValuePromise={collectiveCubingEnabledSettingPromise} />
